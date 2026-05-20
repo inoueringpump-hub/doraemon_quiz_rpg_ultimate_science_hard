@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>22世紀・超科学査読試験 Doraemon-Inspired Ultimate Quiz RPG</title>
+<style>
+:root{
+  --bg:#06111f; --bg2:#0b1930; --panel:#10223d; --panel2:#172d4d; --line:#31537e;
+  --ink:#f0f8ff; --muted:#a9bed8; --blue:#49c7ff; --yellow:#ffd85d; --green:#70eda4;
+  --red:#ff7070; --pink:#ff8bd8; --purple:#b99cff; --orange:#ffae5d;
+  --shadow:0 22px 70px rgba(0,0,0,.38);
+}
+*{box-sizing:border-box}
+html,body{margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, rgba(73,199,255,.25), transparent 26%),
+    radial-gradient(circle at 85% 10%, rgba(255,216,93,.18), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(185,156,255,.12), transparent 32%),
+    linear-gradient(180deg,#06111f 0%,#0b1930 55%,#050b15 100%);
+  overflow-x:hidden;
+}
+button,input{font-family:inherit}
+button{
+  border:0; border-radius:999px; padding:12px 18px; font-weight:900; cursor:pointer;
+  color:#06111f; background:var(--blue); box-shadow:0 10px 28px rgba(73,199,255,.24);
+  transition:.16s transform,.16s filter,.16s opacity;
+}
+button:hover{transform:translateY(-1px); filter:brightness(1.05)}
+button:disabled{opacity:.42; cursor:not-allowed; transform:none}
+button.secondary{background:#233c61; color:var(--ink); border:1px solid var(--line); box-shadow:none}
+button.yellow{background:var(--yellow)}
+button.green{background:var(--green)}
+button.red{background:var(--red)}
+button.pink{background:var(--pink)}
+button.purple{background:var(--purple)}
+.wrap{max-width:1220px; margin:0 auto; padding:18px}
+.screen{display:none}
+.screen.active{display:block}
+.panel{
+  background:rgba(16,34,61,.92); border:1px solid var(--line); border-radius:28px;
+  box-shadow:var(--shadow); backdrop-filter:blur(8px);
+}
+.hero{
+  min-height:calc(100vh - 36px); display:grid; grid-template-columns:1.25fr .8fr; gap:18px; align-items:center;
+}
+.heroMain{padding:30px}
+.kicker{display:inline-flex; gap:8px; align-items:center; padding:7px 12px; border-radius:999px; border:1px solid var(--line); color:#d7ecff; background:rgba(255,255,255,.05); font-weight:800; font-size:.9rem}
+h1{font-size:clamp(2.3rem,5vw,5.2rem); line-height:.98; margin:18px 0 14px; letter-spacing:.02em}
+.lead{color:var(--muted); line-height:1.85; font-size:1.02rem; max-width:820px}
+.featureGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:22px 0}
+.feature{padding:12px; border-radius:18px; border:1px solid var(--line); background:rgba(255,255,255,.04); line-height:1.55}
+.feature b{display:block; color:#fff1b3; margin-bottom:3px}
+.heroButtons{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px}
+.mascotPanel{position:relative; overflow:hidden; min-height:480px; display:flex; align-items:center; justify-content:center; padding:18px}
+.speech{
+  position:absolute; top:18px; right:18px; left:18px; max-width:360px; margin:auto;
+  background:#fff; color:#102033; border-radius:20px; padding:14px 16px; font-weight:900; line-height:1.55;
+  box-shadow:0 18px 38px rgba(0,0,0,.22); z-index:3;
+}
+.speech:after{content:""; position:absolute; bottom:-13px; left:50px; border:13px solid transparent; border-top-color:#fff; border-bottom:0}
+.mascotSvg{width:min(390px,95%); height:auto; margin-top:80px; filter:drop-shadow(0 22px 35px rgba(0,0,0,.34)); animation:floaty 3.5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.modeGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px}
+.modeCard{padding:18px; border-radius:22px; border:1px solid var(--line); background:rgba(255,255,255,.045); cursor:pointer; transition:.18s}
+.modeCard:hover,.modeCard.selected{border-color:var(--blue); background:rgba(73,199,255,.13); transform:translateY(-2px)}
+.modeCard h3{margin:0 0 6px; color:#fff1b3}
+.modeCard p{margin:0; color:var(--muted); line-height:1.65}
+.topbar{display:grid; grid-template-columns:repeat(8,1fr); gap:10px; margin-bottom:14px}
+.stat{padding:11px 12px; border-radius:18px; background:rgba(16,34,61,.92); border:1px solid var(--line)}
+.stat .k{font-size:.76rem; color:var(--muted)}
+.stat .v{font-weight:950; font-size:1.22rem; margin-top:2px}
+.life{letter-spacing:.1em; color:#ff9aac}
+.progressPanel{padding:14px; margin-bottom:14px}
+.progressTop{display:flex; justify-content:space-between; gap:10px; color:#d9edff; font-weight:800; margin-bottom:8px}
+.bar{height:14px; border-radius:999px; background:#071526; border:1px solid var(--line); overflow:hidden}
+.bar>div{height:100%; width:0%; background:linear-gradient(90deg,var(--blue),var(--yellow),var(--pink)); transition:.25s}
+.gameGrid{display:grid; grid-template-columns:1.2fr .48fr; gap:14px; align-items:start}
+.qPanel{padding:20px; min-height:520px}
+.sidePanel{padding:16px}
+.chapterBadge{display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; background:rgba(255,216,93,.11); border:1px solid rgba(255,216,93,.38); color:#fff1b3; font-weight:900; margin-bottom:10px}
+.typeBadge{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; border:1px solid var(--line); color:#d5eaff; background:rgba(255,255,255,.04); font-size:.9rem; margin-left:8px}
+.qText{font-size:1.2rem; font-weight:950; line-height:1.72; margin:8px 0}
+.qSub{color:var(--muted); line-height:1.75; margin-bottom:14px}
+.diagram{border:1px solid var(--line); border-radius:20px; background:#071526; padding:14px; margin:12px 0; overflow:auto}
+.choices{display:grid; gap:10px; margin-top:12px}
+.choice{padding:13px 15px; border-radius:18px; border:1px solid var(--line); background:var(--panel2); line-height:1.55; cursor:pointer; transition:.15s; user-select:none}
+.choice:hover{border-color:var(--blue); transform:translateY(-1px)}
+.choice.selected{outline:2px solid var(--blue); background:#214267}
+.choice.dim{opacity:.32; pointer-events:none}
+.choice.correct{background:rgba(112,237,164,.16); border-color:var(--green)}
+.choice.wrong{background:rgba(255,112,112,.17); border-color:var(--red)}
+input[type=text]{width:100%; border:1px solid var(--line); background:#08182a; color:var(--ink); border-radius:18px; padding:14px; font-size:1rem}
+.help{color:var(--muted); font-size:.92rem; line-height:1.75; margin-top:8px}
+.btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+.box{border:1px solid var(--line); background:#0a182a; border-radius:18px; padding:12px; line-height:1.75; margin-top:12px}
+.boxTitle{font-weight:950; color:#fff1b3; margin-bottom:5px}
+.toolBtn{width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; text-align:left}
+.cardList{display:grid; gap:8px}
+.cardItem{padding:10px 12px; border-radius:15px; border:1px solid var(--line); background:rgba(255,255,255,.04); line-height:1.55; cursor:pointer}
+.cardItem.used{opacity:.42; pointer-events:none}
+.cardItem b{color:#fff1b3}
+.badges{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
+.badge{padding:6px 10px; border-radius:999px; border:1px solid rgba(255,216,93,.4); background:rgba(255,216,93,.12); color:#fff3b9; font-size:.82rem; font-weight:900}
+.seqBoard{margin:12px 0; border:1px dashed var(--line); background:#08182a; border-radius:18px; padding:12px; min-height:68px}
+.seqPicked{display:flex; gap:8px; flex-wrap:wrap}
+.pill{padding:8px 12px; border-radius:999px; background:#244467; border:1px solid var(--line)}
+.log{max-height:180px; overflow:auto; font-size:.88rem}
+.center{text-align:center; padding:28px}
+.resultTitle{font-size:clamp(2rem,4vw,3.4rem); margin:0 0 8px}
+.rank{display:inline-block; margin:12px 0; padding:10px 16px; border-radius:999px; border:1px solid rgba(255,216,93,.5); background:rgba(255,216,93,.14); color:#fff2b5; font-weight:950}
+.resultGrid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0}
+.resultCell{padding:14px; border-radius:18px; border:1px solid var(--line); background:rgba(255,255,255,.04)}
+.resultCell b{display:block; font-size:1.45rem; margin-top:4px}
+.chapterMap{display:grid; gap:8px; margin-top:10px}
+.chapterRow{display:grid; grid-template-columns:105px 1fr 70px; gap:8px; align-items:center; padding:8px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(49,83,126,.6)}
+.miniBar{height:10px; border-radius:999px; background:#071526; overflow:hidden; border:1px solid var(--line)}
+.miniBar>div{height:100%; background:var(--green)}
+.toast{position:fixed; left:50%; bottom:20px; transform:translateX(-50%) translateY(20px); opacity:0; pointer-events:none; z-index:20; background:#fff; color:#102033; padding:12px 16px; border-radius:999px; font-weight:950; box-shadow:0 18px 45px rgba(0,0,0,.28); transition:.25s}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+.flash{position:fixed; inset:0; pointer-events:none; opacity:0; z-index:15; transition:.22s}
+.flash.good{background:rgba(112,237,164,.18); opacity:1}
+.flash.bad{background:rgba(255,112,112,.18); opacity:1}
+.footer{color:var(--muted); line-height:1.75; font-size:.86rem; margin-top:12px}
+@media(max-width:1020px){
+  .hero,.gameGrid{grid-template-columns:1fr}
+  .topbar{grid-template-columns:repeat(4,1fr)}
+  .modeGrid{grid-template-columns:1fr}
+  .resultGrid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .wrap{padding:12px}
+  .heroMain{padding:20px}
+  .featureGrid{grid-template-columns:1fr}
+  .topbar{grid-template-columns:repeat(2,1fr)}
+  .qPanel,.sidePanel{padding:14px}
+  .chapterRow{grid-template-columns:85px 1fr 50px}
+}
+</style>
+</head>
+<body>
+<div class="flash" id="flash"></div>
+<div class="toast" id="toast"></div>
+
+<div class="wrap">
+  <section id="screenTitle" class="screen active">
+    <div class="hero">
+      <div class="panel heroMain">
+        <span class="kicker">非公式・超高難度ファン検定RPG</span>
+        <h1>22世紀<br>査読試験</h1>
+        <div class="lead">
+          青い未来ネコロボ風のオリジナル案内キャラと一緒に、設定値・声優史・放送史・制作史に加え、相対論・熱力学・流体力学・材料力学・神経科学・情報理論まで突破する、
+          HTML単体の攻略型クイズゲームです。
+        </div>
+        <div class="featureGrid">
+          <div class="feature"><b>ステージ制</b>章ごとにジャンルが変化</div>
+          <div class="feature"><b>ボス戦</b>5問ごとに高難度バトル</div>
+          <div class="feature"><b>道具カード</b>スキル使用で戦略性UP</div>
+          <div class="feature"><b>図解問題</b>年表・力学・相似則・時空ゲートを読む</div>
+          <div class="feature"><b>6択/複数/計算</b>専門用語だらけの査読形式</div>
+          <div class="feature"><b>保存機能</b>ハイスコアとバッジを保存</div>
+        </div>
+        <div class="heroButtons">
+          <button onclick="showSetup()">ゲーム開始</button>
+          <button class="secondary" onclick="showHowto()">遊び方</button>
+          <button class="secondary" onclick="clearSave()">保存データ削除</button>
+        </div>
+        <div class="footer">
+          ※公式画像・公式キャラクターの直接再現は使わず、オリジナルの“未来ネコロボ風”UIキャラで構成しています。<br>
+          ※学習・ファン制作向けの非公式HTMLゲームです。
+        </div>
+      </div>
+
+      <div class="panel mascotPanel">
+        <div class="speech" id="speech">いよいよ全部盛り版！<br>これはもう検定というより、22世紀の入試だよ。</div>
+        <svg class="mascotSvg" viewBox="0 0 360 360" aria-label="オリジナル未来ネコロボ風キャラクター">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#37b9ff"/>
+              <stop offset="1" stop-color="#78d9ff"/>
+            </linearGradient>
+          </defs>
+          <circle cx="180" cy="182" r="122" fill="url(#g1)" stroke="#143f63" stroke-width="7"/>
+          <ellipse cx="180" cy="205" rx="92" ry="80" fill="#fff" stroke="#143f63" stroke-width="6"/>
+          <circle cx="129" cy="143" r="31" fill="#fff" stroke="#143f63" stroke-width="5"/>
+          <circle cx="231" cy="143" r="31" fill="#fff" stroke="#143f63" stroke-width="5"/>
+          <circle cx="140" cy="147" r="10" fill="#0b1220"/>
+          <circle cx="220" cy="147" r="10" fill="#0b1220"/>
+          <circle cx="180" cy="166" r="14" fill="#ff5c72" stroke="#8f2836" stroke-width="4"/>
+          <path d="M180 181 L180 239" stroke="#143f63" stroke-width="5"/>
+          <path d="M123 209 Q180 257 237 209" fill="none" stroke="#143f63" stroke-width="6" stroke-linecap="round"/>
+          <line x1="91" y1="176" x2="146" y2="185" stroke="#143f63" stroke-width="5" stroke-linecap="round"/>
+          <line x1="89" y1="199" x2="146" y2="199" stroke="#143f63" stroke-width="5" stroke-linecap="round"/>
+          <line x1="214" y1="185" x2="269" y2="176" stroke="#143f63" stroke-width="5" stroke-linecap="round"/>
+          <line x1="214" y1="199" x2="271" y2="199" stroke="#143f63" stroke-width="5" stroke-linecap="round"/>
+          <path d="M104 86 L134 43 L151 105 Z" fill="#37b9ff" stroke="#143f63" stroke-width="6"/>
+          <path d="M256 86 L226 43 L209 105 Z" fill="#37b9ff" stroke="#143f63" stroke-width="6"/>
+          <path d="M121 72 L134 53 L142 82 Z" fill="#ffd1df"/>
+          <path d="M239 72 L226 53 L218 82 Z" fill="#ffd1df"/>
+          <rect x="120" y="253" width="120" height="34" rx="12" fill="#ff4e60" stroke="#143f63" stroke-width="6"/>
+          <circle cx="180" cy="270" r="16" fill="#ffd85d" stroke="#9a7c16" stroke-width="5"/>
+          <path d="M168 270 h24" stroke="#8a6e16" stroke-width="4"/>
+          <path d="M180 270 v11" stroke="#8a6e16" stroke-width="4"/>
+          <circle cx="180" cy="270" r="4" fill="#8a6e16"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenSetup" class="screen">
+    <div class="panel heroMain">
+      <span class="kicker">モード選択</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.7rem)">どの試験を受けますか？</h1>
+      <div class="lead">最初は「RPG総合試験」がおすすめです。物理・声優・制作史・年表が満遍なく出ます。</div>
+      <div class="modeGrid">
+        <div class="modeCard selected" id="mode-rpg" onclick="selectMode('rpg')">
+          <h3>RPG総合試験</h3>
+          <p>全章を巡る標準モード。ボス戦・道具カード・称号あり。</p>
+        </div>
+        <div class="modeCard" id="mode-survival" onclick="selectMode('survival')">
+          <h3>100問サバイバル風</h3>
+          <p>問題を多めに連続出題。ミスが続くと終了。超長期戦。</p>
+        </div>
+        <div class="modeCard" id="mode-bossrush" onclick="selectMode('bossrush')">
+          <h3>ボスラッシュ</h3>
+          <p>各章のボス級問題だけを連続出題。計算と複数選択多め。</p>
+        </div>
+      </div>
+
+      <div class="modeGrid">
+        <div class="modeCard selected" id="genre-all" onclick="selectGenre('all')">
+          <h3>全ジャンル</h3><p>設定・声優・科学・制作史を横断。</p>
+        </div>
+        <div class="modeCard" id="genre-science" onclick="selectGenre('science')">
+          <h3>科学・物理偏重</h3><p>相対論、熱力学、流体力学、材料力学、神経科学まで。</p>
+        </div>
+        <div class="modeCard" id="genre-history" onclick="selectGenre('history')">
+          <h3>放送史・声優偏重</h3><p>1973/1979/2005の混同トラップ中心。</p>
+        </div>
+      </div>
+
+      <div class="btnRow">
+        <button onclick="startGame()">この条件で開始</button>
+        <button class="secondary" onclick="showTitle()">タイトルへ戻る</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenHowto" class="screen">
+    <div class="panel heroMain">
+      <span class="kicker">遊び方</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.7rem)">攻略型クイズのルール</h1>
+      <div class="lead">
+        6択、複数選択、計算式入力、並び替え、図解問題が混在します。5問ごとにボス戦が発生し、正解すると高得点です。
+      </div>
+      <div class="featureGrid">
+        <div class="feature"><b>ライフ制</b>ミスで減少。0で終了。</div>
+        <div class="feature"><b>コンボ</b>連続正解でスコア倍率UP。</div>
+        <div class="feature"><b>制限時間</b>時間切れもミス扱い。</div>
+        <div class="feature"><b>スモールライト</b>選択肢を2つ消す。</div>
+        <div class="feature"><b>タイムふろしき</b>直前ミスを1回だけ巻き戻す。</div>
+        <div class="feature"><b>どこでもドア</b>問題をスキップして次へ。</div>
+      </div>
+      <div class="btnRow">
+        <button onclick="showSetup()">モード選択へ</button>
+        <button class="secondary" onclick="showTitle()">タイトルへ</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenGame" class="screen">
+    <div class="topbar">
+      <div class="stat"><div class="k">章</div><div class="v" id="stChapter">1</div></div>
+      <div class="stat"><div class="k">問題</div><div class="v" id="stQuestion">1/1</div></div>
+      <div class="stat"><div class="k">スコア</div><div class="v" id="stScore">0</div></div>
+      <div class="stat"><div class="k">倍率</div><div class="v" id="stMult">x1.0</div></div>
+      <div class="stat"><div class="k">コンボ</div><div class="v" id="stCombo">0</div></div>
+      <div class="stat"><div class="k">残機</div><div class="v life" id="stLives">❤❤❤</div></div>
+      <div class="stat"><div class="k">時間</div><div class="v" id="stTime">30</div></div>
+      <div class="stat"><div class="k">正答</div><div class="v" id="stCorrect">0</div></div>
+    </div>
+
+    <div class="panel progressPanel">
+      <div class="progressTop"><span id="progressName">進行度</span><span id="progressPct">0%</span></div>
+      <div class="bar"><div id="progressBar"></div></div>
+    </div>
+
+    <div class="gameGrid">
+      <div class="panel qPanel" id="questionArea"></div>
+      <div class="panel sidePanel">
+        <div class="boxTitle">道具カード</div>
+        <div class="cardList" id="cardList"></div>
+
+        <div class="box">
+          <div class="boxTitle">獲得バッジ</div>
+          <div class="badges" id="badgeList"><span class="badge">未獲得</span></div>
+        </div>
+
+        <div class="box">
+          <div class="boxTitle">章マップ</div>
+          <div class="chapterMap" id="chapterMap"></div>
+        </div>
+
+        <div class="box log" id="logBox">
+          <div class="boxTitle">ログ</div>
+          <div id="log"></div>
+        </div>
+
+        <div class="footer">
+          計算式入力では <b>pi</b>, <b>sqrt()</b>, <b>sin()</b>, <b>cos()</b> が使用可能。単位は入力しないでください。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenResult" class="screen">
+    <div class="panel center" id="resultArea"></div>
+  </section>
+</div>
+
+<script>
+/* ==========================================================
+   データ
+========================================================== */
+const CHAPTERS = [
+  {id:"basic", name:"第1章 基本設定地獄", color:"#ffd85d"},
+  {id:"history", name:"第2章 声優・放送史", color:"#49c7ff"},
+  {id:"science", name:"第3章 ひみつ道具物理学", color:"#70eda4"},
+  {id:"meta", name:"第4章 制作史・裏事情", color:"#ff8bd8"},
+  {id:"boss", name:"最終章 22世紀査読試験", color:"#b99cff"}
+];
+
+const ALL_QUESTIONS = [
+  // basic
+  qChoice("basic","設定値","ドラえもんの基本設定として最も正確な組み合わせはどれか。","誕生日・身長・体重の3点セット。",[
+    "2112年9月3日、129.3cm、129.3kg",
+    "2112年12月9日、129.3cm、93.2kg",
+    "2012年9月3日、129.3cm、129.3kg",
+    "2112年9月3日、132.9cm、129.3kg",
+    "2112年3月9日、129.3cm、129.3kg",
+    "2112年9月3日、123.9cm、129.3kg"
+  ],0,"2012年は生誕100年前関連で出がち。","2112年9月3日、129.3cm、129.3kgが有名な基本設定。"),
+  qCalc("basic","密度計算","直径1.293mの完全な球、質量129.3kgと仮定した平均密度ρ[kg/m³]を求めよ。","ρ = m / ((4/3)πr³)。",114.236,0.8,"129.3/((4/3)*pi*(1.293/2)^3)","半径は0.6465m。","体積約1.132m³、密度は約114.2kg/m³。"),
+  qCalc("basic","位置エネルギー","質量129.3kgの物体を1.00m鉛直に持ち上げる最低仕事量[J]を求めよ。g=9.80665。","mghで計算。",1267.999,1.5,"129.3*9.80665*1","mgh そのもの。","約1268J。見た目よりかなり重い。"),
+  qChoice("basic","設定数値トラップ","“129.3”系の設定値問題で最も引っかかりやすい混同はどれか。","よくある罠を選ぶ。",[
+    "誕生日の2112年9月3日と、生誕100年前の2012年9月3日を混同する",
+    "129.3cmを129.3mと読む",
+    "体重を12.93kgと読む",
+    "2112年を西暦ではなく和暦と読む",
+    "9月3日を3月9日と読み替える",
+    "身長と体重をどちらも速度だと考える"
+  ],0,"2012年は記念年として登場しやすい。","2112年9月3日が誕生日設定。2012年は生誕100年前として扱われることがある。"),
+  qMulti("basic","複数選択・基本設定","次のうち、ドラえもんの代表的な基本設定に関係するものを2つ選べ。","2つだけ選ぶ。",[
+    "2112年9月3日",
+    "129.3cm",
+    "1979年9月3日",
+    "93.2kg",
+    "132.9cm",
+    "2005年9月3日"
+  ],[0,1],"誕生日と身長。","2112年9月3日と129.3cmが該当。",true),
+
+  // history
+  qChoice("history","1973年版","1973年版でドラえもん役の交代順として最も正しいものはどれか。","1979年版・2005年版との混同注意。",[
+    "富田耕生 → 野沢雅子",
+    "野沢雅子 → 富田耕生",
+    "大山のぶ代 → 水田わさび",
+    "水田わさび → 大山のぶ代",
+    "肝付兼太 → たてかべ和也",
+    "小原乃梨子 → 大原めぐみ"
+  ],0,"1973年版は大山のぶ代版より前。","1973年版では富田耕生から野沢雅子へ交代したとされる。"),
+  qChoice("history","主要キャスト対応","1979年版主要5人から2005年以降主要5人への対応として正しいものはどれか。","旧→新の対応。",[
+    "大山のぶ代・小原乃梨子・野村道子・たてかべ和也・肝付兼太 → 水田わさび・大原めぐみ・かかずゆみ・木村昴・関智一",
+    "大山のぶ代・太田淑子・野村道子・肝付兼太・八代駿 → 水田わさび・大原めぐみ・野村道子・木村昴・関智一",
+    "富田耕生・小原乃梨子・野村道子・たてかべ和也・肝付兼太 → 水田わさび・大原めぐみ・かかずゆみ・木村昴・関智一",
+    "大山のぶ代・小原乃梨子・恵比寿まさ子・たてかべ和也・肝付兼太 → 水田わさび・大原めぐみ・かかずゆみ・木村昴・関智一",
+    "大山のぶ代・小原乃梨子・野村道子・八奈見乗児・肝付兼太 → 水田わさび・大原めぐみ・かかずゆみ・関智一・木村昴",
+    "大山のぶ代・野沢雅子・野村道子・たてかべ和也・肝付兼太 → 水田わさび・かかずゆみ・大原めぐみ・木村昴・関智一"
+  ],0,"のび太・しずか・ジャイアン・スネ夫の順に注意。","1979年版から2005年以降への主要キャスト対応は1番。"),
+  qChoice("history","放送開始/終了","1979年テレビ朝日系版の開始日と、大山のぶ代版の終了日の組み合わせとして最も適切なのはどれか。","9月3日は罠。",[
+    "1979年4月2日開始、2005年3月18日終了",
+    "1979年9月3日開始、2005年4月15日終了",
+    "1973年4月2日開始、2005年3月18日終了",
+    "1980年4月2日開始、2005年3月18日終了",
+    "1979年4月2日開始、2006年3月18日終了",
+    "1979年3月18日開始、2005年4月2日終了"
+  ],0,"1979年4月2日が鍵。","1979年版は1979年4月2日開始、2005年3月18日終了。"),
+  qSequence("history","年表並び替え","次の出来事を古い順に並べよ。","候補をタップして順序を作る。",[
+    "1973年版アニメ開始",
+    "1979年版アニメ開始",
+    "2005年リニューアル",
+    "2112年9月3日（誕生設定）"
+  ],[0,1,2,3],"まず実際の放送年、その後に未来設定。","1973→1979→2005→2112。",true),
+  qMulti("history","複数選択・2005年以降","次の6人のうち、2005年以降の主要キャストに含まれる人物を2人選べ。","ちょうど2人。",[
+    "水田わさび","大山のぶ代","木村昴","野村道子","富田耕生","小原乃梨子"
+  ],[0,2],"新ドラえもん役と新ジャイアン役。","水田わさび、木村昴。",true),
+
+  // science
+  qChoice("science","タケコプター空力","タケコプターを現実の回転翼として頭頂部に装着する場合、最も深刻な問題はどれか。","空力と生体力学。",[
+    "反トルク、頸椎への曲げモーメント、局所応力集中",
+    "重心を通ればすべての力学問題が消える",
+    "回転翼は音速以下なら力を生まない",
+    "頭頂部固定なら反トルクはゼロになる",
+    "反トルクは真空中でのみ生じる",
+    "青い色が揚力の主成分になる"
+  ],0,"ヘリの反トルクを考える。","揚力だけでなく反トルク、頸椎・頭蓋への負荷が大問題。",false,true),
+  qChoice("science","どこでもドア物理","どこでもドアを空間上の2点を接続するゲートと考えた場合、厄介な論点はどれか。","座標系・保存則・環境差。",[
+    "地球自転・公転による相対運動、気圧差、重力ポテンシャル差、運動量保存",
+    "木製ドア枠なら一般相対論は無効化される",
+    "緯度経度だけあれば高度と時刻は不要",
+    "遠隔地でも地球表面なら完全に同一慣性系",
+    "黄色いドアなら圧力差は相殺される",
+    "ドアノブ形状が保存則を決める"
+  ],0,"地球は動いている。","ワープ/ゲート系では相対速度・圧力・ポテンシャル差・運動量保存が問題。",false,true),
+  qChoice("science","スモールライト相似則","人体を等方的に1/10へ縮小し、密度一定とした場合、正しいスケーリングはどれか。","平方立方則。",[
+    "断面積1/100、体積1/1000、表面積/体積比は10倍",
+    "断面積1/10、体積1/10、表面積/体積比不変",
+    "断面積1/1000、体積1/100、表面積/体積比1/10",
+    "体積1/1000でも質量は不変",
+    "密度一定なら重力加速度が1/10になる",
+    "断面積1/10、体積1/1000、表面積/体積比100倍"
+  ],0,"長さL、面積L²、体積L³。","長さ1/10なら面積1/100、体積1/1000、表面積/体積比10倍。",false,true),
+  qChoice("science","ビッグライト巨大化","身長を10倍にした場合、密度一定の巨大化で骨格に起こる問題として適切なのはどれか。","平方立方則の逆方向。",[
+    "体重は約1000倍、骨断面積は約100倍なので単位断面積あたり荷重は約10倍",
+    "体重も骨断面積も10倍なので荷重は不変",
+    "体重は増えず、見た目だけ10倍になる",
+    "体重は約100倍、骨断面積は約1000倍になる",
+    "密度一定なら骨格強度は無限大になる",
+    "大きいほど物理法則が遠慮する"
+  ],0,"体積はL³、断面はL²。","巨大化では単位断面積あたり荷重が増大し、骨格・循環・熱放散が厳しい。",false,true),
+  qCalc("science","運動エネルギー","129.3kgの物体が時速88kmで移動する時の運動エネルギー[J]を求めよ。","E=1/2mv²。速度はm/sへ換算。",38630.37,80,"0.5*129.3*(88/3.6)^2","88km/h = 88/3.6 m/s。","約3.86×10^4J。",true,true),
+  qChoice("science","タイムふろしき熱力学","タイムふろしきで物体の時間状態だけを巻き戻す場合、本質的な物理難題はどれか。","古いものが新しくなる問題。",[
+    "局所エントロピー減少、分子配置逆問題、周囲との履歴整合性",
+    "寒色の布なら熱力学第二法則を回避できる",
+    "原子番号が同じなら巻き戻しエネルギーは不要",
+    "物体だけ若返れば環境履歴は自動一致する",
+    "布のしわの数だけ時間軸が増える",
+    "洗濯表示タグが因果律を決める"
+  ],0,"エントロピー。","時間状態の巻き戻しは、エントロピーと履歴整合性が大問題。",false,true),
+  qChoice("science","翻訳コンニャクNLP","翻訳コンニャクを現代AI/NLP風に説明するなら最も近い技術概念はどれか。","単なる辞書変換ではない。",[
+    "音声認識、意味表現、機械翻訳、語用論推定、音声合成",
+    "画像超解像、JPEG量子化、HDR合成、色空間変換",
+    "有限要素法、熱伝導、塑性解析、疲労寿命推定",
+    "PCR、電気泳動、DNAシーケンス、プロテオミクス",
+    "位相差顕微鏡、SEM、TEM、蛍光寿命イメージング",
+    "露出、絞り、焦点距離、ホワイトバランス"
+  ],0,"聞く→理解→翻訳→話す。","音声認識から意味理解・機械翻訳・音声合成まで必要。"),
+
+  // meta
+  qChoice("meta","作者表記","藤子・F・不二雄に関する説明として最も正確なのはどれか。","藤子不二雄Aとの関係。",[
+    "藤子・F・不二雄は藤本弘のペンネームで、共同名義時代を経て独立した作者名として知られる",
+    "藤子・F・不二雄は安孫子素雄だけの名義である",
+    "藤子不二雄Aと藤子・F・不二雄は同一人物の年代別名義である",
+    "ドラえもんはテレビアニメが先で漫画が後から始まった",
+    "藤子・F・不二雄は声優名義でもある",
+    "ドラえもんは2005年に初めて漫画化された"
+  ],0,"藤本弘＝F、安孫子素雄＝A。","藤子・F・不二雄は藤本弘の名義。"),
+  qChoice("meta","リニューアル理解","2005年のテレビアニメ版リニューアルを理解する説明として無理が少ないものはどれか。","キャスト・音楽・作画感など。",[
+    "主要声優・音楽・作画感などを大きく刷新し、現行世代向けにシリーズの見え方を更新した",
+    "2005年に初めてドラえもんが漫画化された",
+    "1979年版は1973年版と同じキャストを完全維持していた",
+    "2005年以降はテレビではなく全編ラジオドラマになった",
+    "2005年にドラえもんの誕生日設定が2112年から1979年へ変更された",
+    "2005年以降は声優が一切存在しない無音アニメになった"
+  ],0,"大きなキャスト刷新があった。","2005年は主要声優を含む大きなリニューアル。"),
+  qChoice("meta","ロボティクス","ドラえもんを22世紀の家庭用汎用ロボットとして考えた場合、最重要級の未解決課題に近いものはどれか。","道具以前の難しさ。",[
+    "身体知能、長期記憶、対人感情モデリング、安全制御、エネルギー密度",
+    "単色LED点灯、乾電池交換、紙テープ入力",
+    "鉱石ラジオ、映写機、活版印刷、蓄音機",
+    "ぜんまい時計、手回し計算機、歯車伝達",
+    "紙飛行機、万華鏡、独楽、けん玉",
+    "石器加工、青銅鋳造、漆工芸、土器成形"
+  ],0,"家庭で子どもと長期共生する難しさ。","汎用身体知能・安全性・感情理解・長期記憶が非常に難しい。"),
+  qChoice("meta","四次元ポケット","四次元ポケットを高次元ストレージへの開口部と仮定した場合、それっぽい専門語はどれか。","幾何・トポロジー寄り。",[
+    "多様体、埋め込み、境界条件、局所座標、トポロジー",
+    "ショットピーニング、窒化処理、真空焼鈍、時効硬化",
+    "CMC、HLB、ミセル、乳化、ゾルゲル",
+    "モール法、キレート滴定、比色分析、重量分析",
+    "切削速度、送り量、逃げ角、すくい角",
+    "演色性、フリッカ、色温度、照度"
+  ],0,"ポケットの内側が外見より広い。","高次元収納口なら多様体・埋め込み・境界条件が近い。",false,true),
+
+  // final boss style
+  qChoice("boss","因果律ボス","タイムマシンを閉じた時間的曲線やワームホール的に解釈する場合、最も関連が深い問題群はどれか。","最終章らしい理論物理。",[
+    "因果律、祖父殺しパラドックス、自己無矛盾原理、エネルギー条件",
+    "レイノルズ数、翼端渦、境界層剥離、失速角",
+    "浸透圧、膜電位、能動輸送、ATP合成",
+    "引張強さ、降伏点、靱性、疲労限度",
+    "シグマ結合、π結合、共鳴、ハメット則",
+    "露出、絞り、焦点距離、色温度"
+  ],0,"時間移動ならまず因果律。","時間移動では因果律や自己無矛盾性が中心問題。",true,true),
+  qMulti("boss","ゲート物理ボス","どこでもドアを現実のゲートとして考えたとき、とくに大きな論点になりやすいものを2つ選べ。","核心的なものを2つ。",[
+    "相対運動・運動量保存",
+    "圧力差・環境差",
+    "ドアノブの塗装色",
+    "蝶番の装飾形状",
+    "木目の向き",
+    "開閉音の可愛さ"
+  ],[0,1],"物理量として意味があるもの。","相対運動・運動量保存、圧力差・環境差が核心。",true,true),
+  qSequence("boss","スケーリングボス","長さを10倍にしたときの増え方として、小さい順に並べよ。","相似則。",[
+    "長さ",
+    "面積",
+    "体積"
+  ],[0,1,2],"L、L²、L³。","長さ→面積→体積。",true,true),
+  qCalc("boss","査読計算ボス","129.3kgの物体を2.5m持ち上げる仕事量[J]を求めよ。g=9.80665。","mgh。",3169.998,4,"129.3*9.80665*2.5","1mのとき約1268J。","2.5mなら約3170J。",true,true),
+  qChoice("boss","放送史トラップボス","ドラえもん検定で最も危険な放送史の混同はどれか。","声優問題の崩壊原因。",[
+    "1973年版、1979年版、2005年以降を同じ1本のキャスト年表として雑に扱うこと",
+    "129.3cmと129.3kgをどちらも色コードだと思うこと",
+    "タイムマシンを自転車の一種とみなすこと",
+    "四次元ポケットを普通の布ポケットと断定すること",
+    "翻訳コンニャクを調味料の一種とみなすこと",
+    "タケコプターを麦わら帽子の一種とみなすこと"
+  ],0,"1973/1979/2005の区別。","1973年版・1979年版・2005年以降の混同が最大級の罠。",true)
+];
+
+// 追加問題を自動生成気味に増やしてサバイバル感を出す
+const EXTRA = [
+  ["science","慣性系","どこでもドアの座標指定で緯度経度だけでは不足しやすい理由として最も適切なのはどれか。",["高度・時刻・地球回転・地殻変動などが絡むため","緯度経度は色名だから","座標は毎秒アルファベット順に変わるため","日本国内なら高度が存在しないため","方位磁針が丸いから","ドア枠の厚みで経度が消える"],0],
+  ["science","空力","タケコプター型の単一ローターで反トルクを相殺するために現実ヘリでよく使われる発想に近いものはどれか。",["テールローターや同軸反転ローターなど","帽子を深くかぶる","ローターを青く塗る","利用者が目を閉じる","靴を重くする","ポケットを空にする"],0],
+  ["meta","NLP","翻訳コンニャクが文脈依存表現を自然に訳すには何が重要か。",["語用論・文脈推定・話者意図推定","画面輝度の固定","レンズ絞り値","木材含水率","ネジのピッチ","鍋の保温性"],0],
+  ["history","年表","2005年リニューアルを1973年版の直接終了とみなす説明が危険な理由はどれか。",["1973年版と1979年テレビ朝日系版は区別すべきだから","2005年は西暦ではないから","1973年にテレビが存在しないから","1979年版は漫画版ではないから","声優は全員同じだから","2112年より後だから"],0],
+  ["basic","単位","129.3cmをmへ換算した値はどれか。",["1.293m","12.93m","0.1293m","1293m","0.01293m","129.3m"],0],
+  ["science","熱","スモールライトで表面積/体積比が増えると、生物物理的に影響しやすいものはどれか。",["熱放散や代謝バランス","テレビ放送局名","声優の芸名","ドアの色","漫画のコマ割りだけ","誕生日の月"],0],
+  ["meta","高次元","四次元ポケットを高次元収納と読む場合、普通の三次元袋と大きく違う点はどれか。",["外見の開口部と内部容量の関係が通常幾何から外れる点","布が必ず赤い点","内部が必ず水で満たされる点","時間が必ず止まる点","重力が存在しない点","音声合成だけで動く点"],0],
+  ["boss","総合","“道具の便利さ”以前にドラえもん本体が高度な存在である理由として最も適切なのはどれか。",["家庭内で長期対人支援できる汎用ロボット知能を持つため","丸いから","青いから","鈴があるから","ポケットが白いから","誕生日が未来だから"],0],
+  ["history","声優","1979年版と2005年以降を比較する際、ジャイアン役の対応として正しいものはどれか。",["たてかべ和也 → 木村昴","肝付兼太 → 関智一","小原乃梨子 → 大原めぐみ","野村道子 → かかずゆみ","大山のぶ代 → 水田わさび","富田耕生 → 野沢雅子"],0],
+  ["history","声優","1979年版と2005年以降を比較する際、スネ夫役の対応として正しいものはどれか。",["肝付兼太 → 関智一","たてかべ和也 → 木村昴","小原乃梨子 → 大原めぐみ","野村道子 → かかずゆみ","大山のぶ代 → 水田わさび","富田耕生 → 野沢雅子"],0],
+  ["science","相似則","身長が1/10になり密度一定なら質量は何倍か。",["1/1000","1/100","1/10","10","100","1000"],0],
+  ["science","相似則","身長が10倍になり密度一定なら体積は何倍か。",["1000倍","100倍","10倍","1倍","1/10","1/100"],0],
+];
+EXTRA.forEach((e,i)=>{
+  ALL_QUESTIONS.push(qChoice(e[0],e[1],e[2],"追加レパートリー問題。",e[3],e[4],"一番物理・史実的に意味の通る選択肢を選ぶ。","正解は専門的に最も整合する選択肢。", i%4===0, e[0]==="science"));
+});
+
+
+// 超専門・科学査読問題パック
+const ADVANCED_SCIENCE = [
+  qChoice("science","一般相対論・ゲート時空",
+    "どこでもドアを“2つの時空領域を接続する通過可能ワームホール状ゲート”とみなす場合、最も専門的に本質へ近い論点はどれか。",
+    "単なる座標ジャンプではなく、時空幾何として考える。",
+    [
+      "アインシュタイン方程式、エネルギー条件、潮汐力、時空の大域的因果構造、トポロジー変化",
+      "ベルヌーイの定理、翼端渦、境界層、ストール角、揚抗比",
+      "フックの法則、降伏応力、疲労限度、S-N曲線、ショットピーニング",
+      "ミカエリス・メンテン式、酵素阻害、Km、Vmax、アロステリック効果",
+      "RGB平均、ガンマ補正、ディザリング、JPEG量子化、色収差",
+      "ヤング率だけを無限大にすれば、因果律とエネルギー条件は自動的に満たされる"
+    ],0,
+    "ワームホールを本気で考えると、局所の力学だけでなく時空全体の因果構造が絡む。",
+    "通過可能ワームホール風に読むなら、エネルギー条件、潮汐力、大域的因果構造、トポロジーが中心論点になる。",
+    true,true
+  ),
+  qChoice("science","熱力学第二法則・タイムふろしき",
+    "タイムふろしきで酸化・摩耗・拡散済みの物体だけを若返らせる場合、最も深刻な熱力学的矛盾に近いものはどれか。",
+    "“新品に戻る”を分子レベルで考える。",
+    [
+      "粗視化エントロピーの局所減少、散逸履歴の逆再構成、周囲へ放出済み熱・物質との整合性問題",
+      "ヤング率が2倍になるとエントロピーは必ずゼロになる問題",
+      "温度を摂氏から華氏へ変換すると時間反転が完了する問題",
+      "酸化膜の色が薄いほど因果律が弱くなる問題",
+      "分子運動は観測されない限り存在しないので履歴は不要という問題",
+      "洗濯表示の耐熱温度を超えなければ第二法則は適用されない問題"
+    ],0,
+    "熱として散逸した履歴まで巻き戻す必要がある。",
+    "物体だけを若返らせるには、拡散・酸化・摩耗・散逸熱などの履歴を整合させる必要があり、局所エントロピー減少が核心になる。",
+    true,true
+  ),
+  qChoice("science","流体力学・タケコプター",
+    "タケコプターの回転翼を小径ローターとして扱うとき、同じ重量を支えるために厳しくなりやすい流体力学上の指標はどれか。",
+    "ローター面積が小さいほど厳しい。",
+    [
+      "円盤荷重、誘導速度、誘導電力、ブレード先端マッハ数、レイノルズ数",
+      "浸透圧、膠質浸透圧、能動輸送、膜電位、Na-Kポンプ",
+      "露出補正、焦点距離、口径食、MTF、周辺減光",
+      "ペンローズタイル、群作用、同値類、商空間、ホモロジー",
+      "HLB値、ミセル形成、臨界ミセル濃度、乳化安定性",
+      "ローターの色相角が240度に近いほど誘導電力は不要になる"
+    ],0,
+    "ヘリの基本として、ローター面積と必要電力の関係を考える。",
+    "小さなローターで大きな重量を支えると円盤荷重が上がり、誘導速度・誘導電力・先端速度・レイノルズ数が問題になる。",
+    true,true
+  ),
+  qCalc("science","誘導電力・タケコプター近似",
+    "体重50kgの人＋129.3kgのドラえもん相当、合計179.3kgをホバリングさせる。理想ローター円盤面積A=0.20m²、空気密度ρ=1.225kg/m³、g=9.80665として、理想誘導電力 P = T^(3/2)/sqrt(2ρA) [W] を求めよ。",
+    "T=mg。小径ローターの厳しさを体感する計算。",
+    105324.5,1800,
+    "(179.3*9.80665)^(3/2)/sqrt(2*1.225*0.20)",
+    "まず推力T=mg。式中の ^ は累乗として入力可能。",
+    "理想計算でも約1.05×10^5W、つまり100kW級。実機損失を考えるとさらに厳しい。",
+    true,true
+  ),
+  qChoice("science","材料力学・ビッグライト",
+    "ビッグライトで10倍化した人体が相似形・同密度のまま立つ場合、骨・腱・関節で支配的に悪化する尺度則はどれか。",
+    "巨大化の定番、平方立方則を材料力学寄りに読む。",
+    [
+      "荷重はL³、支持断面はL²なので、平均応力はL倍に増える",
+      "荷重も支持断面もL³なので、平均応力は不変",
+      "荷重はL²、支持断面はL³なので、平均応力は1/Lになる",
+      "密度一定なら重力荷重は変化しない",
+      "巨大化するとヤング率が自動的にL³倍になる",
+      "関節軟骨だけはトポロジー保護により圧縮応力を受けない"
+    ],0,
+    "荷重は体積、強度は断面におおむね比例。",
+    "相似拡大では重量がL³、断面積がL²なので、応力はL倍。10倍化なら平均応力は約10倍になる。",
+    false,true
+  ),
+  qChoice("science","神経科学・アンキパン",
+    "アンキパンを“食べた文字情報が記憶になる”装置として神経科学に寄せる場合、最も無理の少ない仮想機構はどれか。",
+    "胃で文字を覚える、では足りない。",
+    [
+      "視覚記号列を意味表現へ符号化し、海馬-新皮質系の記憶エングラムへ選択的に書き込む脳腸軸/BCI様機構",
+      "デンプンが胃酸で直接ニューロンに変化し、海馬へ物理的に移植される機構",
+      "黒インクが血液脳関門を通過し、視覚野のミエリン鞘に文字を印刷する機構",
+      "咀嚼回数が増えるほどDNAへ鉛筆成分が転写される機構",
+      "小腸絨毛が音声合成を行い、鼓膜から再入力するだけの機構",
+      "糖質が多いほど長期増強LTPが必ず100%成功する機構"
+    ],0,
+    "記憶には情報の符号化とエングラム形成が必要。",
+    "仮に成立させるなら、消化管入力と脳内記憶表象をつなぐ超高性能な脳腸軸/BCI的機構が必要になる。",
+    false,true
+  ),
+  qChoice("science","情報理論・翻訳コンニャク",
+    "翻訳コンニャクが未知言語・方言・皮肉・省略表現まで高精度に訳す場合、最も重要な情報科学的課題はどれか。",
+    "辞書置換では突破できない領域。",
+    [
+      "発話意図推定、語用論、共参照解析、世界知識、曖昧性解消、低資源言語の表現学習",
+      "PNG圧縮率、ホワイトバランス、レンズ歪曲補正、色温度変換",
+      "鋼材の焼入れ性、浸炭深さ、残留応力、粒界腐食",
+      "旋盤の送り速度、切削油粘度、工具摩耗、面粗度",
+      "浸透圧、細胞膜流動性、アクアポリン、能動輸送",
+      "コンニャクの弾性率だけを上げれば、語用論は自動で解決する"
+    ],0,
+    "言語の意味は文脈と世界知識に依存する。",
+    "皮肉・省略・方言・未知語には、語用論・文脈・世界知識・曖昧性解消・表現学習が必要になる。",
+    false,false
+  ),
+  qChoice("science","制御工学・ロボット本体",
+    "ドラえもん本体を家庭内自律ロボットとして査読する場合、最も重大な制御工学・安全工学上の論点はどれか。",
+    "ひみつ道具以前に本体がすごい。",
+    [
+      "人間共存環境での安全制約付き強化学習、接触力制御、フェイルセーフ、説明可能性、長期適応",
+      "単純なON/OFFリレーだけで十分で、センサーは不要",
+      "青色塗装により制御ループの安定余裕が自動的に増える",
+      "鈴の音色が良ければアクチュエータのバックドライバビリティは不要",
+      "家庭内では外乱が存在しないため、フィードバック制御は不要",
+      "丸い形状なら全ての安全規格を自動で満たす"
+    ],0,
+    "家庭内は不確実で、人間との接触がある。",
+    "家庭内共存ロボットでは、安全制約、接触力制御、フェイルセーフ、長期適応、説明可能性が非常に重要。",
+    true,false
+  ),
+  qChoice("science","量子情報・もしもボックス",
+    "もしもボックスを“条件を満たす別世界へ分岐/選択する装置”としてSF物理風に読む場合、最もそれっぽい専門語群はどれか。",
+    "現実科学として成立するという意味ではなく、解釈として近い語群。",
+    [
+      "多世界解釈、デコヒーレンス、状態ベクトル、射影測定、選択効果、人間原理",
+      "ベルヌーイ定理、渦度、抗力係数、揚力係数、迎角",
+      "ヤング率、ポアソン比、せん断弾性率、破壊靭性",
+      "発酵、糖化、乳酸菌、酵母、pH緩衝能",
+      "露出、ISO感度、絞り、シャッタースピード、被写界深度",
+      "電話ボックスの受話器抵抗値だけで宇宙定数を変更する"
+    ],0,
+    "“世界の条件を選ぶ”というSF解釈。",
+    "もしもボックスを別世界選択装置として読むなら、多世界解釈やデコヒーレンスなどの語群が近い。ただし現実装置として可能という意味ではない。",
+    true,true
+  ),
+  qChoice("science","連続体力学・スモールライト",
+    "スモールライトで人体を1/100スケールに縮小した場合、表面張力や粘性の相対的重要性が増す。この種の議論で使われる無次元数として最も近いものはどれか。",
+    "小さくなると慣性より粘性・表面力が効きやすい。",
+    [
+      "レイノルズ数、ウェーバー数、ボンド数",
+      "ハッブル定数、赤方偏移、光度距離",
+      "ヤング率、ポアソン比、硬度",
+      "Km、Vmax、Hill係数",
+      "色温度、演色評価数、照度",
+      "郵便番号、電話番号、製造番号"
+    ],0,
+    "流体・表面力・重力の比を表す無次元数。",
+    "小スケールではRe数、We数、Bo数などが効き、粘性・表面張力の相対的重要性が増す。",
+    false,true
+  ),
+  qCalc("science","平方立方則・巨大化応力",
+    "身長を10倍に相似拡大した場合、密度と材料強度が同じなら、骨の平均応力は元の何倍になるか。単純に荷重∝L³、断面積∝L²とする。",
+    "答えは倍率のみ。",
+    10,0.01,
+    "10^3/10^2",
+    "荷重倍率を断面積倍率で割る。",
+    "1000/100=10。平均応力は約10倍になる。",
+    false,true
+  ),
+  qChoice("science","相対論・時間移動",
+    "タイムマシンを相対論的に考えるとき、“過去への移動”で特に問題になる概念として最も適切なのはどれか。",
+    "未来への時間遅れとは違う。",
+    [
+      "閉じた時間的曲線、年代保護仮説、自己無矛盾原理、因果ループ",
+      "ドップラー冷却、レーザー冷却、ボース凝縮、フェルミ縮退",
+      "翼面荷重、誘導抗力、プロペラ効率、失速",
+      "界面活性剤、HLB、ミセル、乳化破壊",
+      "MTF、球面収差、コマ収差、倍率色収差",
+      "時計の針を逆に回せば世界線も必ず逆転する"
+    ],0,
+    "過去方向の時間移動は因果律が焦点。",
+    "過去への時間移動では閉じた時間的曲線や因果ループ、自己無矛盾性が問題になる。",
+    true,true
+  ),
+  qChoice("science","宇宙論・もしもボックス",
+    "もしもボックスで“物理定数そのものが違う宇宙”を作ると仮定した場合、最も専門的に問題化しやすいものはどれか。",
+    "少し変えるだけでも宇宙構造が変わる。",
+    [
+      "微細構造定数、重力定数、陽子電子質量比、元素合成、恒星進化、構造形成",
+      "鉛筆硬度、紙の白色度、インク粘度、消しゴム摩耗",
+      "ローター色、ドアノブ形状、鈴の直径、ポケット縫製",
+      "魚の鮮度、出汁濃度、塩分、鍋の保温性",
+      "シャッター音、レリーズ感、グリップ形状、ストラップ長",
+      "物理定数は人間が名前を変えるだけで全て安定する"
+    ],0,
+    "宇宙の安定性は定数に敏感。",
+    "物理定数が違う宇宙では元素合成・恒星進化・構造形成が大きく変わり、生命や物質の安定性も問題になる。",
+    true,true
+  ),
+  qChoice("science","電磁気学・スモールライト光線",
+    "スモールライトの“光線”が対象のサイズ・質量・内部構造を変えると仮定した場合、通常の電磁波として最も説明困難な点はどれか。",
+    "光を当てるだけでは相似縮小にならない。",
+    [
+      "原子間距離・結合エネルギー・質量分布・量子状態を選択的かつ巨視的に再スケーリングする点",
+      "光子が直進する点",
+      "電磁波が真空中を伝わる点",
+      "可視光に波長がある点",
+      "照射面に影ができる点",
+      "ライトの持ち手がプラスチックである点"
+    ],0,
+    "見た目の縮小ではなく物質構造そのものが変わる。",
+    "普通の電磁波では、物体全体の原子間距離・質量分布・量子状態を整合的に縮小する説明が極めて難しい。",
+    false,true
+  ),
+  qChoice("science","生体熱収支・スモールライト",
+    "1/10縮小した生物が密度一定・代謝相似で存在すると仮定した場合、熱収支で注目すべき比率はどれか。",
+    "小動物ほど熱を失いやすいイメージ。",
+    [
+      "表面積/体積比の増大により、熱放散が相対的に大きくなる",
+      "表面積/体積比が減少し、熱が逃げにくくなる",
+      "体積だけが増えて、表面積は変わらない",
+      "縮小すると絶対零度以下になる",
+      "小さくなるほど重力定数が増える",
+      "体表面が青ければ熱収支は常にゼロになる"
+    ],0,
+    "面積と体積のスケール差。",
+    "縮小すると表面積/体積比が増え、熱放散や代謝バランスが大きく変わる。",
+    false,true
+  ),
+  qChoice("science","記憶科学・アンキパン副作用",
+    "アンキパンが短時間で大量情報を記憶へ書き込む場合、神経科学的な副作用として最も真面目に考えるべきものはどれか。",
+    "記憶は単純な保存領域ではない。",
+    [
+      "干渉、過剰固定化、睡眠依存的固定化の破綻、シナプス可塑性の飽和",
+      "胃酸が強いほど全記憶が永久化する",
+      "情報量が多いほど海馬の体積が瞬時に10倍化する",
+      "咀嚼音が大きいほど意味記憶と手続き記憶が混ざらない",
+      "文字数が多いほど血糖値が必ず下がる",
+      "パンの耳を残せば忘却曲線が直線になる"
+    ],0,
+    "記憶の固定化と干渉。",
+    "大量情報を強制記銘するなら、記憶干渉、可塑性の飽和、睡眠依存的固定化への影響が問題になる。",
+    false,false
+  ),
+  qChoice("science","情報セキュリティ・どこでもドア",
+    "どこでもドアをネットワーク化された座標指定装置と仮定した場合、安全設計として最も重要な論点はどれか。",
+    "物理だけでなくセキュリティも危ない。",
+    [
+      "認証、認可、座標改ざん防止、フェイルセーフ、ログ監査、ジオフェンシング",
+      "ドアベルの音量、壁紙の柄、蝶番の色、取っ手の丸み",
+      "部屋の湿度だけを見れば十分",
+      "青色LEDを付ければ全ての不正アクセスは防げる",
+      "パスワードを“dora”にすれば安全",
+      "座標を紙に書けば改ざんは物理的に不可能になる"
+    ],0,
+    "任意地点へ移動できるなら、アクセス制御が超重要。",
+    "座標改ざんや不正利用を防ぐには、認証・認可・監査ログ・フェイルセーフ・ジオフェンシングが重要になる。",
+    false,false
+  ),
+  qMulti("science","複数選択・専門用語識別",
+    "次のうち、タケコプターの現実物理査読で特に関係が深い語を2つ選べ。",
+    "流体力学と回転翼。",
+    [
+      "円盤荷重",
+      "誘導速度",
+      "ミセル濃度",
+      "赤方偏移",
+      "PCRプライマー",
+      "ハメット則"
+    ],[0,1],
+    "ローターが空気へ与える運動量を考える。",
+    "円盤荷重と誘導速度が回転翼の査読に関係する。",
+    true,true
+  ),
+  qMulti("science","複数選択・タイムふろしき査読",
+    "次のうち、タイムふろしきの科学考察で特に重要な語を2つ選べ。",
+    "物体の時間状態を戻すなら何が問題か。",
+    [
+      "エントロピー",
+      "散逸履歴",
+      "HLB値",
+      "絞り開放F値",
+      "切削送り量",
+      "白色点"
+    ],[0,1],
+    "熱力学と履歴。",
+    "エントロピーと散逸履歴が重要。",
+    true,true
+  ),
+  qMulti("science","複数選択・翻訳コンニャク査読",
+    "次のうち、翻訳コンニャクの情報科学的考察で特に重要な語を2つ選べ。",
+    "言語理解の中核。",
+    [
+      "語用論",
+      "曖昧性解消",
+      "破壊靭性",
+      "円盤荷重",
+      "ボンド数",
+      "焼入れ深さ"
+    ],[0,1],
+    "文脈と意味の解釈。",
+    "語用論と曖昧性解消が重要。",
+    false,false
+  ),
+  qSequence("science","並び替え・物理階層",
+    "どこでもドアを科学査読する場合、問題の階層として小さい/局所的なものから大きい/大域的なものへ並べよ。",
+    "局所環境から時空全体へ。",
+    [
+      "気圧差・温度差",
+      "相対速度・運動量保存",
+      "重力ポテンシャル差",
+      "時空の大域的因果構造"
+    ],[0,1,2,3],
+    "まずドア付近の環境、次に運動量、最後は因果構造。",
+    "局所環境→相対運動/保存則→重力ポテンシャル→大域的因果構造の順。",
+    true,true
+  )
+];
+
+ADVANCED_SCIENCE.forEach(q=>ALL_QUESTIONS.push(q));
+
+function qChoice(chapter,tag,q,sub,choices,answer,hint,ex,boss=false,diagram=false){
+  return {type:"choice6",chapter,tag,q,sub,choices,answer,hint,ex,boss,diagram,time: boss?26:32};
+}
+function qMulti(chapter,tag,q,sub,choices,answers,hint,ex,boss=false,diagram=false){
+  return {type:"multi2",chapter,tag,q,sub,choices,answers,hint,ex,boss,diagram,time: boss?30:34};
+}
+function qCalc(chapter,tag,q,sub,answer,tol,placeholder,hint,ex,boss=false,diagram=false){
+  return {type:"calc",chapter,tag,q,sub,answer,tol,placeholder,hint,ex,boss,diagram,time: boss?38:42};
+}
+function qSequence(chapter,tag,q,sub,items,seqAnswer,hint,ex,boss=false,diagram=false){
+  return {type:"sequence",chapter,tag,q,sub,items,seqAnswer,hint,ex,boss,diagram,time: boss?34:38};
+}
+
+/* ==========================================================
+   状態
+========================================================== */
+let selectedMode = "rpg";
+let selectedGenre = "all";
+let deck = [];
+let state = {};
+const SAVE_KEY = "doraemon_inspired_quiz_rpg_save_v1";
+
+function newState(){
+  return {
+    idx:0, score:0, correct:0, wrong:0, combo:0, maxCombo:0, lives:4, time:30, timer:null,
+    selected:null, selectedMulti:[], seqPicked:[], answered:false, usedRewind:false,
+    multiplier:1.0, badges:[], log:[], chapterStats:{}, skipSafe:false,
+    cards:{small:2,time:2,rewind:1,door:1,hint:3,anki:1},
+    anki:false,
+    lastMistake:null,
+    completed:false
+  };
+}
+
+/* ==========================================================
+   画面遷移
+========================================================== */
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function showTitle(){ show("screenTitle"); }
+function showSetup(){ show("screenSetup"); }
+function showHowto(){ show("screenHowto"); }
+function selectMode(m){
+  selectedMode=m;
+  ["rpg","survival","bossrush"].forEach(x=>document.getElementById("mode-"+x).classList.toggle("selected",x===m));
+}
+function selectGenre(g){
+  selectedGenre=g;
+  ["all","science","history"].forEach(x=>document.getElementById("genre-"+x).classList.toggle("selected",x===g));
+}
+
+/* ==========================================================
+   開始・デッキ生成
+========================================================== */
+function startGame(){
+  state = newState();
+  deck = makeDeck(selectedMode, selectedGenre);
+  show("screenGame");
+  addLog("試験開始。モード：" + selectedMode + " / ジャンル：" + selectedGenre);
+  setSpeech("試験開始！ 道具カードは温存しすぎても腐るから、使いどころが大事だよ。");
+  renderQuestion();
+}
+function makeDeck(mode, genre){
+  let arr = [...ALL_QUESTIONS];
+  if(genre==="science") arr = arr.filter(q=>q.chapter==="science" || q.chapter==="boss" || q.diagram);
+  if(genre==="history") arr = arr.filter(q=>q.chapter==="history" || q.chapter==="basic" || q.chapter==="boss");
+  if(mode==="bossrush") arr = arr.filter(q=>q.boss || q.type==="calc" || q.type==="multi2");
+  shuffleArray(arr);
+
+  if(mode==="rpg"){
+    const result = [];
+    CHAPTERS.forEach(ch=>{
+      let part = arr.filter(q=>q.chapter===ch.id);
+      if(part.length===0 && ch.id==="boss") part = arr.filter(q=>q.boss);
+      shuffleArray(part);
+      result.push(...part.slice(0, ch.id==="boss"?5:6));
+    });
+    return result.length ? result : arr.slice(0,24);
+  }
+  if(mode==="survival"){
+    let long = [];
+    for(let i=0;i<4;i++){ let c=[...arr]; shuffleArray(c); long.push(...c); }
+    return long.slice(0,100);
+  }
+  if(mode==="bossrush"){
+    return arr.slice(0,18);
+  }
+  return arr.slice(0,25);
+}
+
+/* ==========================================================
+   描画
+========================================================== */
+function renderQuestion(){
+  if(state.idx >= deck.length || state.lives <= 0){ endGame(); return; }
+  clearInterval(state.timer);
+  state.selected=null; state.selectedMulti=[]; state.seqPicked=[]; state.answered=false; state.skipSafe=false;
+  const q = currentQ();
+  state.time = q.time || 30;
+  ensureChapter(q.chapter);
+
+  let area = document.getElementById("questionArea");
+  area.innerHTML = `
+    <div class="chapterBadge">${chapterName(q.chapter)} ${q.boss ? " / BOSS" : ""}</div>
+    <span class="typeBadge">${typeName(q.type)}</span>
+    <div class="qText">Q${state.idx+1}. ${q.q}</div>
+    <div class="qSub">${q.sub||""}</div>
+    ${q.diagram ? diagramFor(q) : ""}
+    ${renderAnswerArea(q)}
+    <div class="btnRow">
+      <button onclick="submitAnswer()">回答する</button>
+      <button class="secondary" onclick="manualSkip()">撤退する</button>
+    </div>
+    <div class="box" id="resultBox" style="display:none"></div>
+  `;
+  updateStats();
+  updateSide();
+  startTimer();
+}
+function renderAnswerArea(q){
+  if(q.type==="choice6"){
+    return `<div class="choices">${q.choices.map((c,i)=>`<div class="choice" id="choice-${i}" onclick="selectChoice(${i})"><b>${String.fromCharCode(65+i)}.</b> ${c}</div>`).join("")}</div>`;
+  }
+  if(q.type==="multi2"){
+    return `<div class="choices">${q.choices.map((c,i)=>`<div class="choice" id="choice-${i}" onclick="toggleMulti(${i})"><b>${String.fromCharCode(65+i)}.</b> ${c}</div>`).join("")}</div><div class="help">ちょうど <b>2つ</b> 選択してください。</div>`;
+  }
+  if(q.type==="calc"){
+    return `<input type="text" id="calcInput" placeholder="${q.placeholder||'数値または式を入力'}"><div class="help">式入力OK：例 <b>129.3*9.80665</b> / <b>pi</b>, <b>sqrt()</b> 使用可。</div>`;
+  }
+  if(q.type==="sequence"){
+    return `<div class="seqBoard"><div class="help">現在の並び</div><div class="seqPicked" id="seqPicked"></div></div>
+    <div class="choices">${q.items.map((c,i)=>`<div class="choice" id="choice-${i}" onclick="pickSeq(${i})">${c}</div>`).join("")}</div>
+    <div class="btnRow"><button class="secondary" onclick="clearSeq()">並びをクリア</button></div>`;
+  }
+}
+function diagramFor(q){
+  if(q.tag.includes("タケコプター") || q.q.includes("タケコプター")){
+    return `<div class="diagram">
+      <svg viewBox="0 0 520 170" width="100%" height="170">
+        <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffd85d"/></marker></defs>
+        <circle cx="260" cy="96" r="36" fill="#49c7ff" stroke="#d7ecff" stroke-width="3"/>
+        <rect x="225" y="130" width="70" height="28" rx="14" fill="#fff" opacity=".9"/>
+        <line x1="160" y1="52" x2="360" y2="52" stroke="#d7ecff" stroke-width="8" stroke-linecap="round"/>
+        <line x1="260" y1="52" x2="260" y2="70" stroke="#d7ecff" stroke-width="5"/>
+        <line x1="260" y1="50" x2="260" y2="15" stroke="#ffd85d" stroke-width="4" marker-end="url(#arr)"/>
+        <text x="270" y="25" fill="#ffd85d" font-size="15">揚力</text>
+        <path d="M312 95 C350 80 350 115 315 120" fill="none" stroke="#ff8bd8" stroke-width="4" marker-end="url(#arr)"/>
+        <text x="355" y="107" fill="#ff8bd8" font-size="15">反トルク</text>
+        <text x="32" y="145" fill="#a9bed8" font-size="14">頭頂部一点支持 → 頸椎・頭蓋への局所応力集中</text>
+      </svg>
+    </div>`;
+  }
+  if(q.tag.includes("どこでも") || q.q.includes("どこでも")){
+    return `<div class="diagram">
+      <svg viewBox="0 0 520 170" width="100%" height="170">
+        <circle cx="145" cy="88" r="48" fill="none" stroke="#49c7ff" stroke-width="3"/>
+        <circle cx="375" cy="88" r="48" fill="none" stroke="#ffd85d" stroke-width="3"/>
+        <rect x="125" y="45" width="40" height="85" rx="5" fill="#49c7ff" opacity=".35" stroke="#d7ecff"/>
+        <rect x="355" y="45" width="40" height="85" rx="5" fill="#ffd85d" opacity=".35" stroke="#d7ecff"/>
+        <path d="M175 88 C230 25 290 25 345 88" fill="none" stroke="#ff8bd8" stroke-width="4" stroke-dasharray="7 7"/>
+        <text x="82" y="150" fill="#a9bed8" font-size="14">地点A：速度・気圧・高度</text>
+        <text x="312" y="150" fill="#a9bed8" font-size="14">地点B：速度・気圧・高度</text>
+        <text x="192" y="28" fill="#ff8bd8" font-size="14">保存則・座標系が問題</text>
+      </svg>
+    </div>`;
+  }
+  if(q.tag.includes("スケーリング") || q.q.includes("スケーリング") || q.q.includes("10倍") || q.q.includes("1/10")){
+    return `<div class="diagram">
+      <svg viewBox="0 0 520 170" width="100%" height="170">
+        <rect x="60" y="90" width="35" height="35" fill="#49c7ff"/>
+        <rect x="190" y="55" width="70" height="70" fill="#ffd85d"/>
+        <rect x="360" y="20" width="105" height="105" fill="#70eda4"/>
+        <text x="52" y="145" fill="#a9bed8" font-size="14">長さ L</text>
+        <text x="188" y="145" fill="#a9bed8" font-size="14">面積 L²</text>
+        <text x="362" y="145" fill="#a9bed8" font-size="14">体積 L³</text>
+        <text x="35" y="28" fill="#d7ecff" font-size="15">平方立方則：巨大化/縮小で比率が崩れる</text>
+      </svg>
+    </div>`;
+  }
+  return `<div class="diagram">
+    <svg viewBox="0 0 520 150" width="100%" height="150">
+      <text x="25" y="42" fill="#ffd85d" font-size="17">図解問題</text>
+      <line x1="70" y1="88" x2="450" y2="88" stroke="#49c7ff" stroke-width="4"/>
+      <circle cx="100" cy="88" r="10" fill="#ffd85d"/><circle cx="220" cy="88" r="10" fill="#70eda4"/><circle cx="340" cy="88" r="10" fill="#ff8bd8"/><circle cx="450" cy="88" r="10" fill="#b99cff"/>
+      <text x="80" y="120" fill="#a9bed8" font-size="13">1973</text><text x="200" y="120" fill="#a9bed8" font-size="13">1979</text><text x="320" y="120" fill="#a9bed8" font-size="13">2005</text><text x="430" y="120" fill="#a9bed8" font-size="13">2112</text>
+    </svg>
+  </div>`;
+}
+function updateStats(){
+  const q = currentQ();
+  document.getElementById("stChapter").textContent = q ? chapterShort(q.chapter) : "-";
+  document.getElementById("stQuestion").textContent = `${Math.min(state.idx+1,deck.length)}/${deck.length}`;
+  document.getElementById("stScore").textContent = state.score;
+  document.getElementById("stMult").textContent = "x"+state.multiplier.toFixed(1);
+  document.getElementById("stCombo").textContent = state.combo;
+  document.getElementById("stLives").textContent = "❤".repeat(state.lives)+"♡".repeat(Math.max(0,4-state.lives));
+  document.getElementById("stTime").textContent = state.time;
+  document.getElementById("stCorrect").textContent = state.correct;
+  let pct = Math.round((state.idx/deck.length)*100);
+  document.getElementById("progressPct").textContent = pct+"%";
+  document.getElementById("progressBar").style.width = pct+"%";
+  document.getElementById("progressName").textContent = q ? chapterName(q.chapter) : "進行度";
+}
+function updateSide(){
+  const cards = [
+    ["small","スモールライト","選択肢を2つ消す"],
+    ["time","タイムストップ","残り時間+15秒"],
+    ["rewind","タイムふろしき","直前ミスを1回だけ巻き戻す"],
+    ["door","どこでもドア","1問スキップしてミスなし"],
+    ["hint","翻訳コンニャク","ヒント表示"],
+    ["anki","アンキパン","次の正解スコア+50%"]
+  ];
+  document.getElementById("cardList").innerHTML = cards.map(c=>{
+    const n=state.cards[c[0]]||0;
+    return `<div class="cardItem ${n<=0?'used':''}" onclick="useCard('${c[0]}')"><b>${c[1]}</b> ×${n}<br><span style="color:var(--muted)">${c[2]}</span></div>`;
+  }).join("");
+  document.getElementById("badgeList").innerHTML = state.badges.length ? state.badges.map(b=>`<span class="badge">${b}</span>`).join("") : `<span class="badge">未獲得</span>`;
+  document.getElementById("chapterMap").innerHTML = CHAPTERS.map(ch=>{
+    const st=state.chapterStats[ch.id]||{seen:0,correct:0};
+    const rate=st.seen?Math.round(st.correct/st.seen*100):0;
+    return `<div class="chapterRow"><div>${ch.name.replace(/^第\d章 /,"").replace("最終章 ","")}</div><div class="miniBar"><div style="width:${rate}%"></div></div><div>${rate}%</div></div>`;
+  }).join("");
+  document.getElementById("log").innerHTML = state.log.slice(-10).map(x=>`<div>・${x}</div>`).join("");
+}
+function currentQ(){ return deck[state.idx]; }
+function chapterName(id){ return (CHAPTERS.find(c=>c.id===id)||{}).name || id; }
+function chapterShort(id){ return id==="boss"?"最終":(CHAPTERS.findIndex(c=>c.id===id)+1); }
+function typeName(t){ return t==="choice6"?"6択":t==="multi2"?"複数選択":t==="calc"?"計算入力":t==="sequence"?"並び替え":t; }
+
+/* ==========================================================
+   入力
+========================================================== */
+function selectChoice(i){
+  if(state.answered)return;
+  state.selected=i;
+  document.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));
+  document.getElementById("choice-"+i)?.classList.add("selected");
+}
+function toggleMulti(i){
+  if(state.answered)return;
+  const p=state.selectedMulti.indexOf(i);
+  if(p>=0) state.selectedMulti.splice(p,1);
+  else{
+    if(state.selectedMulti.length>=2) return;
+    state.selectedMulti.push(i);
+  }
+  document.querySelectorAll(".choice").forEach((x,idx)=>x.classList.toggle("selected",state.selectedMulti.includes(idx)));
+}
+function pickSeq(i){
+  if(state.answered || state.seqPicked.includes(i))return;
+  state.seqPicked.push(i);
+  document.getElementById("choice-"+i)?.classList.add("selected");
+  redrawSeq();
+}
+function clearSeq(){
+  if(state.answered)return;
+  state.seqPicked=[];
+  document.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));
+  redrawSeq();
+}
+function redrawSeq(){
+  const q=currentQ();
+  document.getElementById("seqPicked").innerHTML = state.seqPicked.map(i=>`<span class="pill">${q.items[i]}</span>`).join("");
+}
+
+/* ==========================================================
+   採点
+========================================================== */
+function submitAnswer(){
+  if(state.answered)return;
+  const q=currentQ();
+  let ok=false, extra="";
+  if(q.type==="choice6"){
+    if(state.selected===null){toast("選択してください");return;}
+    ok=state.selected===q.answer;
+    flashChoices(q.answer,[state.selected]);
+  }else if(q.type==="multi2"){
+    if(state.selectedMulti.length!==2){toast("2つ選んでください");return;}
+    ok=[...state.selectedMulti].sort().join(",")===[...q.answers].sort().join(",");
+    flashChoices(q.answers,state.selectedMulti);
+  }else if(q.type==="calc"){
+    const raw=document.getElementById("calcInput").value.trim();
+    if(!raw){toast("入力してください");return;}
+    try{
+      const val=safeEval(raw);
+      ok=Number.isFinite(val)&&Math.abs(val-q.answer)<=q.tol;
+      extra=`入力値：${Number(val).toFixed(4)}`;
+    }catch(e){ok=false; extra="式の解釈に失敗しました。";}
+  }else if(q.type==="sequence"){
+    if(state.seqPicked.length!==q.seqAnswer.length){toast("すべて並べてください");return;}
+    ok=state.seqPicked.join(",")===q.seqAnswer.join(",");
+  }
+  state.answered=true;
+  clearInterval(state.timer);
+  grade(ok, extra);
+}
+function grade(ok, extra=""){
+  const q=currentQ();
+  ensureChapter(q.chapter);
+  state.chapterStats[q.chapter].seen++;
+  let box=document.getElementById("resultBox");
+  box.style.display="block";
+  if(ok){
+    const base = q.boss ? 220 : 100;
+    const timeBonus = Math.max(0,state.time)*3;
+    const comboBonus = state.combo*18;
+    const ankiBonus = state.anki ? 0.5 : 0;
+    state.combo++;
+    state.maxCombo=Math.max(state.maxCombo,state.combo);
+    state.multiplier=1+Math.min(1.5,state.combo*0.08)+ankiBonus;
+    const add=Math.round((base+timeBonus+comboBonus)*state.multiplier);
+    state.score += add;
+    state.correct++;
+    state.chapterStats[q.chapter].correct++;
+    if(state.anki){ state.anki=false; addLog("アンキパン効果発動。"); }
+    box.innerHTML=`<div class="boxTitle">正解！ +${add}点</div>${extra?extra+"<br>":""}${q.ex}`;
+    goodFlash(); setSpeech("正解！ コンボが育ってきたよ。");
+    awardBadges(q);
+  }else{
+    state.combo=0; state.multiplier=1.0; state.wrong++;
+    if(state.usedRewind && !state.lastMistake){
+      state.lastMistake={idx:state.idx};
+    }
+    state.lives--;
+    box.innerHTML=`<div class="boxTitle">不正解…</div>${extra?extra+"<br>":""}${q.ex}`;
+    badFlash(); setSpeech("不正解…。でも解説を読めば知識は残る！");
+  }
+  updateStats(); updateSide(); saveProgress();
+  setTimeout(()=>{
+    if(state.lives<=0){endGame();return;}
+    state.idx++;
+    renderQuestion();
+  }, 1800);
+}
+function flashChoices(corrects, chosen){
+  corrects = Array.isArray(corrects)?corrects:[corrects];
+  document.querySelectorAll(".choice").forEach((el,idx)=>{
+    if(corrects.includes(idx)) el.classList.add("correct");
+    if(chosen.includes(idx) && !corrects.includes(idx)) el.classList.add("wrong");
+  });
+}
+function safeEval(expr){
+  if(!/^[0-9+\-*/().,\s^pieEqrtcosinta]+$/.test(expr)) throw new Error("invalid");
+  let s=expr.toLowerCase().replaceAll("π","pi").replaceAll("^","**")
+    .replace(/\bpi\b/g,"Math.PI").replace(/\bsqrt\b/g,"Math.sqrt")
+    .replace(/\bsin\b/g,"Math.sin").replace(/\bcos\b/g,"Math.cos").replace(/\btan\b/g,"Math.tan");
+  return Function('"use strict";return('+s+')')();
+}
+
+/* ==========================================================
+   カード
+========================================================== */
+function useCard(kind){
+  if(state.cards[kind]<=0){return;}
+  const q=currentQ();
+  if(kind==="small"){
+    if(!(q.type==="choice6"||q.type==="multi2")){toast("この問題では使えません");return;}
+    let wrong=[];
+    for(let i=0;i<q.choices.length;i++){
+      const good=q.type==="choice6" ? i===q.answer : q.answers.includes(i);
+      if(!good) wrong.push(i);
+    }
+    shuffleArray(wrong); wrong.slice(0,2).forEach(i=>document.getElementById("choice-"+i)?.classList.add("dim"));
+    state.cards.small--; addLog("スモールライト：選択肢を縮小。"); setSpeech("選択肢を小さくしたよ。まだ油断できないけどね。");
+  }
+  if(kind==="time"){
+    state.time += 15; state.cards.time--; addLog("タイムストップ：+15秒。"); setSpeech("時間を少し止めたよ。");
+  }
+  if(kind==="rewind"){
+    if(state.lastMistake){
+      state.idx=state.lastMistake.idx; state.lives=Math.min(4,state.lives+1); state.lastMistake=null; state.cards.rewind--;
+      addLog("タイムふろしき：直前ミスを巻き戻し。"); setSpeech("直前のミスを巻き戻したよ。次は慎重に！");
+      renderQuestion(); return;
+    }else{
+      toast("巻き戻せる直前ミスがありません"); return;
+    }
+  }
+  if(kind==="door"){
+    state.cards.door--; addLog("どこでもドア：1問スキップ。"); setSpeech("どこでもドアでこの問題を抜けたよ。");
+    state.idx++; renderQuestion(); return;
+  }
+  if(kind==="hint"){
+    state.cards.hint--; addLog("翻訳コンニャク：ヒント表示。");
+    const box=document.getElementById("resultBox"); box.style.display="block";
+    box.innerHTML=`<div class="boxTitle">ヒント</div>${q.hint}`;
+    setSpeech("ヒントを翻訳しておいたよ。");
+  }
+  if(kind==="anki"){
+    state.cards.anki--; state.anki=true; addLog("アンキパン：次の正解スコア+50%。"); setSpeech("次に正解するとスコアが伸びるよ。");
+  }
+  updateStats(); updateSide();
+}
+function manualSkip(){
+  if(state.answered)return;
+  if(!confirm("撤退すると1ミス扱いです。道具カード『どこでもドア』ならミスなしで飛ばせます。"))return;
+  state.answered=true; clearInterval(state.timer); state.lives--; state.combo=0; state.multiplier=1;
+  addLog("撤退：1ミス。");
+  if(state.lives<=0){endGame();return;}
+  state.idx++; renderQuestion();
+}
+
+/* ==========================================================
+   タイマー・終了
+========================================================== */
+function startTimer(){
+  clearInterval(state.timer);
+  state.timer=setInterval(()=>{
+    if(state.answered)return;
+    state.time--; updateStats();
+    if(state.time<=0){
+      clearInterval(state.timer);
+      state.answered=true;
+      state.combo=0; state.multiplier=1; state.lives--; state.wrong++;
+      document.getElementById("resultBox").style.display="block";
+      document.getElementById("resultBox").innerHTML=`<div class="boxTitle">時間切れ…</div>${currentQ().ex}`;
+      badFlash(); addLog("時間切れ。");
+      setTimeout(()=>{ if(state.lives<=0) endGame(); else {state.idx++; renderQuestion();}},1500);
+    }
+  },1000);
+}
+function endGame(){
+  clearInterval(state.timer);
+  state.completed=true;
+  saveProgress(true);
+  const rank=rankName();
+  const old=Number(localStorage.getItem(SAVE_KEY+"_high")||0);
+  if(state.score>old) localStorage.setItem(SAVE_KEY+"_high",String(state.score));
+  const high=Math.max(old,state.score);
+  show("screenResult");
+  document.getElementById("resultArea").innerHTML=`
+    <h2 class="resultTitle">試験終了！</h2>
+    <div class="rank">${rank}</div>
+    <div class="resultGrid">
+      <div class="resultCell">スコア<b>${state.score}</b></div>
+      <div class="resultCell">正答<b>${state.correct}/${deck.length}</b></div>
+      <div class="resultCell">最大コンボ<b>${state.maxCombo}</b></div>
+      <div class="resultCell">ハイスコア<b>${high}</b></div>
+    </div>
+    <div class="box" style="text-align:left">
+      <div class="boxTitle">獲得バッジ</div>
+      <div class="badges">${state.badges.length?state.badges.map(b=>`<span class="badge">${b}</span>`).join(""):"<span class='badge'>なし</span>"}</div>
+    </div>
+    <div class="box" style="text-align:left">
+      <div class="boxTitle">次の改良余地</div>
+      <ul style="line-height:1.8">
+        <li>問題を外部JSON化して1000問規模に拡張</li>
+        <li>効果音・BGMのON/OFF設定</li>
+        <li>キャラ表情差分とボス登場アニメーション追加</li>
+        <li>問題作成エディタを同梱して、自作問題を追加可能にする</li>
+        <li>結果画面をSNS投稿風カードとして出力</li>
+      </ul>
+    </div>
+    <div class="btnRow" style="justify-content:center">
+      <button onclick="showSetup()">別モードで再挑戦</button>
+      <button class="secondary" onclick="showTitle()">タイトルへ</button>
+    </div>
+  `;
+  setSpeech("おつかれさま！ これはもう十分ゲーム作品っぽくなったね。");
+}
+function rankName(){
+  const rate=state.correct/Math.max(1,deck.length);
+  if(rate>=.95) return "22世紀査読者級";
+  if(rate>=.82) return "四次元ポケット解析主任";
+  if(rate>=.68) return "ひみつ道具物理学専攻";
+  if(rate>=.52) return "声優・放送史上級者";
+  if(rate>=.36) return "未来ネコロボ研究助手";
+  return "のびしろ最大級";
+}
+
+/* ==========================================================
+   バッジ・保存・ユーティリティ
+========================================================== */
+function awardBadges(q){
+  const add=b=>{ if(!state.badges.includes(b)){state.badges.push(b); toast("バッジ獲得："+b);} };
+  if(q.type==="calc") add("計算式入力者");
+  if(q.boss) add("ボス撃破");
+  if(q.chapter==="science") add("ひみつ道具物理班");
+  if(q.chapter==="history") add("声優史追跡者");
+  if(state.combo>=5) add("5連コンボ");
+  if(state.combo>=10) add("10連コンボ");
+  if(state.correct>=20) add("20問突破");
+}
+function ensureChapter(id){
+  if(!state.chapterStats[id]) state.chapterStats[id]={seen:0,correct:0};
+}
+function addLog(s){ state.log.push(s); updateSide?.(); }
+function setSpeech(s){ document.getElementById("speech").innerHTML=s; }
+function toast(s){
+  const t=document.getElementById("toast"); t.textContent=s; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),1500);
+}
+function goodFlash(){ const f=document.getElementById("flash"); f.className="flash good"; setTimeout(()=>f.className="flash",220); }
+function badFlash(){ const f=document.getElementById("flash"); f.className="flash bad"; setTimeout(()=>f.className="flash",220); }
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} }
+function saveProgress(final=false){
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      lastScore:state.score,lastCorrect:state.correct,lastBadges:state.badges,final,mode:selectedMode,genre:selectedGenre,date:new Date().toISOString()
+    }));
+  }catch(e){}
+}
+function clearSave(){
+  localStorage.removeItem(SAVE_KEY); localStorage.removeItem(SAVE_KEY+"_high");
+  toast("保存データを削除しました");
+}
+</script>
+</body>
+</html>
